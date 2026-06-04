@@ -26,18 +26,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user?.passwordHash) return null;
         const valid = await verifyPassword(credentials.password as string, user.passwordHash);
         if (!valid) return null;
-        return { id: user._id.toString(), email: user.email, name: user.name, image: user.image };
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          image: user.image ?? null,
+          role: user.role,
+        };
       },
     }),
   ],
-  session: { strategy: "database" },
+  // JWT strategy is required for Credentials provider — database sessions don't
+  // work with credentials-based auth in Auth.js v5.
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user && user) {
-        session.user.id = user.id;
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = (user as { role?: string }).role ?? "user";
+      }
+      // For Google users, look up role from DB on first sign-in
+      if (!token.role && token.email) {
+        await connectDB();
+        const dbUser = await User.findOne({ email: token.email }).lean();
+        token.role = dbUser?.role ?? "user";
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        (session.user as { role?: string }).role = token.role as string;
       }
       return session;
     },
