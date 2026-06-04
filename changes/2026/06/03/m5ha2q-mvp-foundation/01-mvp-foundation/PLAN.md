@@ -354,7 +354,7 @@ vercel.json
 
 ## Implementation State
 
-**Current Phase:** Phase 5a (Card API Routes)
+**Current Phase:** Phase 5b (Card Creator & Archive UI)
 **Status:** in_progress
 
 ### Completed Phases
@@ -362,6 +362,7 @@ vercel.json
 - [x] Phase 2: Data Model
 - [x] Phase 3: Authentication & Invite System
 - [x] Phase 4: Image Library
+- [x] Phase 5a: Card API Routes
 - [ ] Phase 2: Data Model
 - [ ] Phase 3: Authentication & Invite System
 - [ ] Phase 4: Image Library
