@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const PUBLIC_PATHS = ["/login", "/invite", "/view", "/api/auth"];
 const ADMIN_PATHS = ["/admin"];
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   const { pathname } = req.nextUrl;
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
