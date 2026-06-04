@@ -69,6 +69,19 @@ auth.ts               # Auth.js config
 | `giphy` | GIF URL stored directly (no S3 copy) |
 | `meme` | Canvas-rendered PNG uploaded to S3 |
 
+## Meme Template Source — Known Limitation
+
+The current `/api/memes/templates` route proxies Imgflip's free `get_memes` endpoint, which is hard-capped at **100 templates**. No free search endpoint exists.
+
+**Options to explore:**
+
+| Option | Cost | Notes |
+|--------|------|-------|
+| Imgflip `search_memes` | $0.005/search after 200/mo free | Searches 1M+ templates. Add `IMGFLIP_USERNAME` + `IMGFLIP_PASSWORD` to env |
+| Static curated JSON | Free | Bundle a larger hand-picked list of Imgflip CDN URLs with the app. No API needed for display |
+| Tenor API (Google) | Free tier generous | Skews toward GIFs but has huge catalog and real search |
+| meme-api.com | Free | Pulls from Reddit meme subreddits — more variety, less content control |
+
 ## Effect Registry
 
 Effects are self-contained modules in `effects/`. Registry in `effects/registry.ts`. Add a new effect by creating a file that exports `play(): void` and registering it.
