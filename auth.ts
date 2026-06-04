@@ -3,6 +3,9 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
+import { connectDB } from "@/lib/db";
+import { verifyPassword } from "@/lib/password";
+import User from "@/models/User";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -16,9 +19,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize() {
-        // Implemented in Phase 3 (Auth & Invite System)
-        return null;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+        await connectDB();
+        const user = await User.findOne({ email: credentials.email, provider: "credentials" });
+        if (!user?.passwordHash) return null;
+        const valid = await verifyPassword(credentials.password as string, user.passwordHash);
+        if (!valid) return null;
+        return { id: user._id.toString(), email: user.email, name: user.name, image: user.image };
       },
     }),
   ],
