@@ -31,6 +31,7 @@ export default async function ViewPage({ params }: { params: Promise<{ token: st
   }
 
   const card = result;
+  const hasText = Boolean(card.recipientName || card.title || card.message);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
@@ -40,7 +41,7 @@ export default async function ViewPage({ params }: { params: Promise<{ token: st
           <div className="relative w-full aspect-video bg-gray-100">
             <Image
               src={card.imageUrl}
-              alt={card.title}
+              alt={card.title || "Card image"}
               fill
               className="object-contain"
               sizes="640px"
@@ -48,11 +49,13 @@ export default async function ViewPage({ params }: { params: Promise<{ token: st
             />
           </div>
         )}
-        <div className="p-8 space-y-4">
-          <p className="text-sm font-medium text-indigo-500 tracking-wide uppercase">For {card.recipientName}</p>
-          <h1 className="text-2xl font-bold text-gray-900">{card.title}</h1>
-          <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{card.message}</p>
-        </div>
+        {hasText && (
+          <div className="p-8 space-y-4">
+            {card.recipientName && <p className="text-sm font-medium text-indigo-500 tracking-wide uppercase">For {card.recipientName}</p>}
+            {card.title && <h1 className="text-2xl font-bold text-gray-900">{card.title}</h1>}
+            {card.message && <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{card.message}</p>}
+          </div>
+        )}
       </div>
     </div>
   );
