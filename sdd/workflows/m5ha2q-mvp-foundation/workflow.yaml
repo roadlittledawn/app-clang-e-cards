@@ -1,0 +1,31 @@
+id: m5ha2q
+name: mvp-foundation
+source: interactive
+created: 2026-06-03
+current: 01-mvp-foundation
+
+phase: spec
+step: spec_creation
+
+progress:
+  total_items: 1
+  specs_completed: 0
+  specs_pending: 1
+  plans_completed: 0
+  plans_pending: 1
+  implemented: 0
+  reviewed: 0
+
+items:
+  - id: 01-mvp-foundation
+    change_id: mvp-foundation-1
+    title: MVP Foundation
+    type: feature
+    location: sdd/workflows/m5ha2q-mvp-foundation/drafts/01-mvp-foundation
+    context_sections: []
+    depends_on: []
+    spec_status: in_progress
+    plan_status: pending
+    impl_status: pending
+    review_status: pending
+    substep: solicitation
