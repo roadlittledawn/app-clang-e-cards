@@ -95,13 +95,13 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
         <Field label="Title" required>
           <input
             required value={title} onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </Field>
         <Field label="Recipient name" required>
           <input
             required value={recipientName} onChange={(e) => setRecipientName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </Field>
         <Field label="Message" required>
