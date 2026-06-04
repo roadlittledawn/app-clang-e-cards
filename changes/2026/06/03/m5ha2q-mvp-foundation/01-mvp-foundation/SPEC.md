@@ -43,7 +43,7 @@ Empty repository. No application code exists. This spec covers the full MVP: aut
 
 ### Archive & Reuse
 - As a user, I can view a list of all cards I've created with title, recipient, created date, and link status
-- As a user, I can duplicate a past card and update its details (e.g., recipient name) before resharing
+- As a user, I can duplicate a card I previously sent to one person, update the recipient name (and any other details), save it as a new independent card, and generate a fresh share link for the new recipient — without affecting the original card or its links
 - As a user, I can delete a card (hard delete — immediately removes card and invalidates share links)
 
 ### Image Library
@@ -101,9 +101,11 @@ Empty repository. No application code exists. This spec covers the full MVP: aut
 - Cards sorted by created date descending
 
 ### FR-8: Card Duplication
-- User can duplicate any card from their archive
-- Duplicate opens in the card editor pre-filled with all fields
-- Treated as a new card (new `_id`, no link to original)
+- User can duplicate any card from their archive (e.g., a card previously sent to Person A, now being reused for Person B)
+- Duplicate opens in the card editor pre-filled with all fields from the original (title, message, recipient name, image, effect, template type)
+- User updates any fields they want (typically just recipient name)
+- Saved as a completely new independent card (new `_id`) — the original card and all its share links are unaffected
+- User then generates a new share link for the duplicated card as normal
 
 ### FR-9: Card Deletion
 - Hard delete: card document removed from MongoDB
@@ -351,7 +353,7 @@ Deferred to post-MVP. Vercel provides basic request logs and error tracking on f
 
 **Archive & reuse**
 - Given I'm logged in, when I visit `/dashboard`, then I see all my cards with title, recipient, date, and link status
-- Given I duplicate a card, then a new draft opens pre-filled with the original's content
+- Given I duplicate a card (e.g., one I sent to Person A), when I open the duplicate, then all fields are pre-filled from the original; I update the recipient name (and optionally other fields), save it as a new card, and can generate a fresh share link — the original card and its links are completely unaffected
 - Given I delete a card, then it is removed from my archive and all its share links return "card not found"
 
 **Image library**
