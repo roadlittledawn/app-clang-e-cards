@@ -2,13 +2,13 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
+import { getMongoClient } from "@/lib/mongodb";
 import { connectDB } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
 import User from "@/models/User";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(getMongoClient),
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,

@@ -1,6 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3, S3_BUCKET, userImageKey } from "@/lib/s3";
+import { getS3Client, getS3Bucket, userImageKey } from "@/lib/s3";
 import { randomUUID } from "crypto";
 import path from "path";
 
@@ -21,18 +21,20 @@ export async function createPresignedUploadUrl(
   const ext = path.extname(filename) || ".jpg";
   const uuid = randomUUID();
   const s3Key = userImageKey(userId, `${uuid}${ext}`);
+  const bucket = getS3Bucket();
 
   const command = new PutObjectCommand({
-    Bucket: S3_BUCKET,
+    Bucket: bucket,
     Key: s3Key,
     ContentType: mimeType,
-    ContentLength: undefined,
   });
 
-  const url = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 min TTL
+  const url = await getSignedUrl(getS3Client(), command, { expiresIn: 300 });
   return { url, s3Key };
 }
 
 export function s3PublicUrl(s3Key: string): string {
-  return `https://${S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+  const bucket = process.env.S3_BUCKET_NAME ?? "";
+  const region = process.env.AWS_REGION ?? "us-east-1";
+  return `https://${bucket}.s3.${region}.amazonaws.com/${s3Key}`;
 }
