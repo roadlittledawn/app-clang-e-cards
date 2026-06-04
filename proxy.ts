@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/invite", "/view", "/api/auth"];
+const PUBLIC_PATHS = ["/login", "/invite", "/view", "/api/auth", "/api/view"];
 const ADMIN_PATHS = ["/admin"];
 
 export const proxy = auth((req) => {
