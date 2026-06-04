@@ -13,7 +13,7 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
   if (!card || card.userId.toString() !== (session?.user as { id?: string })?.id) notFound();
 
   // Compute previewUrl server-side so the client form can show the existing image
-  let imageWithPreview = card.image
+  const imageWithPreview = card.image
     ? {
         ...card.image,
         imageId: card.image.imageId?.toString() as unknown as typeof card.image.imageId,
@@ -28,9 +28,9 @@ export default async function EditCardPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit card</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{card.templateType === "meme" ? "Edit meme" : "Edit card"}</h1>
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <CardForm initial={{
+        <CardForm templateType={card.templateType} initial={{
           id: card._id.toString(),
           title: card.title,
           message: card.message,
