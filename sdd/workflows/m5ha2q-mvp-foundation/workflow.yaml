@@ -26,6 +26,6 @@ items:
     depends_on: []
     spec_status: approved
     plan_status: approved
-    impl_status: pending
+    impl_status: in_progress
     review_status: pending
     substep: null

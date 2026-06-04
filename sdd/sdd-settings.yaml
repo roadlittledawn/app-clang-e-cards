@@ -14,7 +14,32 @@ sdd:
 project:
   name: "app-clang-e-cards"
 
-# Tech packs and components are added here during init and implementation.
+components:
+  config:
+    type: config
+    techpack: fs-ts
+    directory: components/config/
+
+  ecards-db:
+    type: database
+    techpack: fs-ts
+    directory: components/databases/ecards-db/
+    settings:
+      provider: mongodb
+
+  ecards-app:
+    type: webapp
+    techpack: fs-ts
+    directory: .
+    settings:
+      framework: nextjs
+      version: "16"
+      deployment: vercel
+
+  main-pipeline:
+    type: cicd
+    techpack: fs-ts
+    directory: .github/workflows/
 
 techpacks:
   fs-ts:
