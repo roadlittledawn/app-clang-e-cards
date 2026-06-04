@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import EffectPicker from "./EffectPicker";
+import CardPreview from "./CardPreview";
 import ImageUploader from "@/components/images/ImageUploader";
 import ImageLibrary from "@/components/images/ImageLibrary";
 import GiphyPicker from "@/components/giphy/GiphyPicker";
@@ -28,12 +29,18 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
   const [message, setMessage] = useState(initial?.message ?? "");
   const [recipientName, setRecipientName] = useState(initial?.recipientName ?? "");
   const [effect, setEffect] = useState<EffectType | "none">(initial?.effect ?? "none");
-  const [imageTab, setImageTab] = useState<Tab>("upload");
+  const [imageTab, setImageTab] = useState<Tab>(
+    initial?.image?.mode === "giphy" ? "giphy"
+    : initial?.image?.mode === "meme" ? "meme"
+    : initial?.image ? "upload"
+    : "upload"
+  );
   const [cardImage, setCardImage] = useState<(ICardImage & { previewUrl?: string }) | null>(
     initial?.image ?? null
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [previewing, setPreviewing] = useState(false);
 
   function setUploadedImage(img: { _id: string; s3Key: string; url: string }) {
     setCardImage({ mode: "upload", imageId: img._id as unknown as ICardImage["imageId"], s3Key: img.s3Key, previewUrl: img.url });
@@ -150,12 +157,32 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <button
-        type="submit" disabled={saving}
-        className="w-full bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition"
-      >
-        {saving ? "Saving…" : initial?.id ? "Save changes" : "Create card"}
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => setPreviewing(true)}
+          className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2.5 text-sm font-medium hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Preview
+        </button>
+        <button
+          type="submit" disabled={saving}
+          className="flex-1 bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          {saving ? "Saving…" : initial?.id ? "Save changes" : "Create card"}
+        </button>
+      </div>
+
+      {previewing && (
+        <CardPreview
+          title={title}
+          message={message}
+          recipientName={recipientName}
+          effect={effect === "none" ? null : effect}
+          imageUrl={cardImage?.previewUrl ?? null}
+          onClose={() => setPreviewing(false)}
+        />
+      )}
     </form>
   );
 }
