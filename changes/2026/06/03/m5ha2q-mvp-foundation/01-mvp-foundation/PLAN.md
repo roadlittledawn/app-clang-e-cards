@@ -354,7 +354,7 @@ vercel.json
 
 ## Implementation State
 
-**Current Phase:** Phase 6 (Effect Registry & Effects)
+**Current Phase:** Phase 7 (Public Card Viewer)
 **Status:** in_progress
 
 ### Completed Phases
@@ -364,6 +364,7 @@ vercel.json
 - [x] Phase 4: Image Library
 - [x] Phase 5a: Card API Routes
 - [x] Phase 5b: Card Creator & Archive UI
+- [x] Phase 6: Effect Registry & Effects
 - [ ] Phase 2: Data Model
 - [ ] Phase 3: Authentication & Invite System
 - [ ] Phase 4: Image Library
