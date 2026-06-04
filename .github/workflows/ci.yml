@@ -27,13 +27,13 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXTAUTH_SECRET: ci-secret-placeholder
-          NEXTAUTH_URL: http://localhost:3000
-          MONGODB_URI: mongodb://localhost:27017/ecards-ci
-          AWS_REGION: us-east-1
-          AWS_ACCESS_KEY_ID: placeholder
-          AWS_SECRET_ACCESS_KEY: placeholder
-          S3_BUCKET_NAME: placeholder
-          GIPHY_API_KEY: placeholder
-          GOOGLE_CLIENT_ID: placeholder
-          GOOGLE_CLIENT_SECRET: placeholder
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
