@@ -1,6 +1,8 @@
 # app-clang-e-cards
 
-Multi-tenant e-card CRUD application built with Next.js 15, MongoDB, AWS S3, and deployed on Vercel.
+[![Deployed on Vercel](https://vercel.com/button)](https://app-clang-e-cards.vercel.app)
+
+Multi-user e-card app built with Next.js 16, MongoDB, AWS S3, and deployed on Vercel.
 
 ## Development
 
