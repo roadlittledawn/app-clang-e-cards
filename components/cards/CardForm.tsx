@@ -9,7 +9,7 @@ import ImageUploader from "@/components/images/ImageUploader";
 import ImageLibrary from "@/components/images/ImageLibrary";
 import GiphyPicker from "@/components/giphy/GiphyPicker";
 import MemePicker from "@/components/memes/MemePicker";
-import type { EffectType, ICardImage } from "@/models/Card";
+import type { EffectType, ICardImage, TemplateType } from "@/models/Card";
 
 type ImageMode = "upload" | "giphy" | "meme";
 type Tab = "upload" | "library" | "giphy" | "meme";
@@ -23,14 +23,22 @@ interface InitialValues {
   effect?: EffectType;
 }
 
-export default function CardForm({ initial }: { initial?: InitialValues }) {
+export default function CardForm({
+  initial,
+  templateType = "standard",
+}: {
+  initial?: InitialValues;
+  templateType?: TemplateType;
+}) {
+  const isMeme = templateType === "meme";
   const router = useRouter();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [message, setMessage] = useState(initial?.message ?? "");
   const [recipientName, setRecipientName] = useState(initial?.recipientName ?? "");
   const [effect, setEffect] = useState<EffectType | "none">(initial?.effect ?? "none");
   const [imageTab, setImageTab] = useState<Tab>(
-    initial?.image?.mode === "giphy" ? "giphy"
+    isMeme ? "meme"
+    : initial?.image?.mode === "giphy" ? "giphy"
     : initial?.image?.mode === "meme" ? "meme"
     : initial?.image ? "upload"
     : "upload"
@@ -56,8 +64,14 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setError("");
+
+    if (isMeme && (!cardImage || cardImage.mode !== "meme")) {
+      setError("Pick and caption a meme first.");
+      return;
+    }
+
+    setSaving(true);
 
     const imagePayload = cardImage ? {
       mode: cardImage.mode as ImageMode,
@@ -67,6 +81,7 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
     } : undefined;
 
     const body = {
+      templateType,
       title,
       message,
       recipientName,
@@ -98,40 +113,44 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
-      <div className="space-y-4">
-        <Field label="Title" required>
-          <input
-            required value={title} onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        </Field>
-        <Field label="Recipient name" required>
-          <input
-            required value={recipientName} onChange={(e) => setRecipientName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
-        </Field>
-        <Field label="Message" required>
-          <textarea
-            required rows={4} value={message} onChange={(e) => setMessage(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-          />
-        </Field>
-      </div>
-
-      <Field label="Image (optional)">
-        <div className="flex gap-2 mb-3">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id} type="button" onClick={() => setImageTab(tab.id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
-                imageTab === tab.id ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600 hover:border-indigo-400"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {!isMeme && (
+        <div className="space-y-4">
+          <Field label="Title" required>
+            <input
+              required value={title} onChange={(e) => setTitle(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </Field>
+          <Field label="Recipient name" required>
+            <input
+              required value={recipientName} onChange={(e) => setRecipientName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </Field>
+          <Field label="Message" required>
+            <textarea
+              required rows={4} value={message} onChange={(e) => setMessage(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            />
+          </Field>
         </div>
+      )}
+
+      <Field label={isMeme ? "Meme" : "Image (optional)"}>
+        {!isMeme && (
+          <div className="flex gap-2 mb-3">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id} type="button" onClick={() => setImageTab(tab.id)}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
+                  imageTab === tab.id ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 text-gray-600 hover:border-indigo-400"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {cardImage?.previewUrl && (
           <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100 mb-3">
@@ -145,10 +164,16 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
           </div>
         )}
 
-        {imageTab === "upload" && <ImageUploader onUploaded={setUploadedImage} />}
-        {imageTab === "library" && <ImageLibrary onSelect={(img) => setCardImage({ mode: "upload", imageId: img._id as unknown as ICardImage["imageId"], previewUrl: img.url })} selectedId={cardImage?.imageId?.toString()} />}
-        {imageTab === "giphy" && <GiphyPicker onSelect={setGiphyImage} selectedUrl={cardImage?.giphyUrl} />}
-        {imageTab === "meme" && <MemePicker onGenerated={setMemeImage} />}
+        {isMeme ? (
+          <MemePicker onGenerated={setMemeImage} />
+        ) : (
+          <>
+            {imageTab === "upload" && <ImageUploader onUploaded={setUploadedImage} />}
+            {imageTab === "library" && <ImageLibrary onSelect={(img) => setCardImage({ mode: "upload", imageId: img._id as unknown as ICardImage["imageId"], previewUrl: img.url })} selectedId={cardImage?.imageId?.toString()} />}
+            {imageTab === "giphy" && <GiphyPicker onSelect={setGiphyImage} selectedUrl={cardImage?.giphyUrl} />}
+            {imageTab === "meme" && <MemePicker onGenerated={setMemeImage} />}
+          </>
+        )}
       </Field>
 
       <Field label="Effect">
@@ -169,7 +194,7 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
           type="submit" disabled={saving}
           className="flex-1 bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          {saving ? "Saving…" : initial?.id ? "Save changes" : "Create card"}
+          {saving ? "Saving…" : initial?.id ? (isMeme ? "Save meme" : "Save changes") : (isMeme ? "Create meme" : "Create card")}
         </button>
       </div>
 
@@ -180,6 +205,7 @@ export default function CardForm({ initial }: { initial?: InitialValues }) {
           recipientName={recipientName}
           effect={effect === "none" ? null : effect}
           imageUrl={cardImage?.previewUrl ?? null}
+          templateType={templateType}
           onClose={() => setPreviewing(false)}
         />
       )}

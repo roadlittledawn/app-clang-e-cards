@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import EffectPlayer from "@/components/effects/EffectPlayer";
+import type { TemplateType } from "@/models/Card";
 
 interface Props {
   title: string;
@@ -9,10 +10,12 @@ interface Props {
   recipientName: string;
   effect: string | null;
   imageUrl: string | null;
+  templateType?: TemplateType;
   onClose: () => void;
 }
 
-export default function CardPreview({ title, message, recipientName, effect, imageUrl, onClose }: Props) {
+export default function CardPreview({ title, message, recipientName, effect, imageUrl, templateType = "standard", onClose }: Props) {
+  const isMeme = templateType === "meme";
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -44,21 +47,27 @@ export default function CardPreview({ title, message, recipientName, effect, ima
 
         {imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={title} className="w-full max-h-72 object-contain bg-gray-100" />
+          <img src={imageUrl} alt={title || "Card image"} className="w-full max-h-72 object-contain bg-gray-100" />
         )}
 
-        <div className="p-8 space-y-3">
-          <p className="text-sm font-semibold text-indigo-500 tracking-wide uppercase">
-            For {recipientName || "…"}
-          </p>
-          <h2 className="text-2xl font-bold text-gray-900">{title || "Untitled"}</h2>
-          <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
-            {message || "Your message will appear here."}
-          </p>
-          {effect && effect !== "none" && (
-            <p className="text-xs text-indigo-400 pt-1">✦ {effect} effect plays on open</p>
-          )}
-        </div>
+        {(!isMeme || (effect && effect !== "none")) && (
+          <div className="p-8 space-y-3">
+            {!isMeme && (
+              <>
+                <p className="text-sm font-semibold text-indigo-500 tracking-wide uppercase">
+                  For {recipientName || "…"}
+                </p>
+                <h2 className="text-2xl font-bold text-gray-900">{title || "Untitled"}</h2>
+                <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+                  {message || "Your message will appear here."}
+                </p>
+              </>
+            )}
+            {effect && effect !== "none" && (
+              <p className="text-xs text-indigo-400 pt-1">✦ {effect} effect plays on open</p>
+            )}
+          </div>
+        )}
 
         <div className="px-8 pb-5">
           <p className="text-xs text-gray-400 text-center">Preview — click outside or press Esc to close</p>

@@ -17,18 +17,24 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const { title, message, recipientName, image, effect, templateType } = body;
+  const template = templateType === "meme" ? "meme" : "standard";
 
-  if (!title || !message || !recipientName) {
+  if (template === "meme") {
+    // Image-only card: no text required, but a generated meme image is.
+    if (!image || image.mode !== "meme" || !image.s3Key) {
+      return NextResponse.json({ error: "A meme image is required" }, { status: 400 });
+    }
+  } else if (!title || !message || !recipientName) {
     return NextResponse.json({ error: "title, message, and recipientName are required" }, { status: 400 });
   }
 
   await connectDB();
   const card = await Card.create({
     userId: session.user.id,
-    templateType: templateType ?? "standard",
-    title,
-    message,
-    recipientName,
+    templateType: template,
+    title: title ?? "",
+    message: message ?? "",
+    recipientName: recipientName ?? "",
     image: image ?? undefined,
     effect: effect ?? undefined,
   });

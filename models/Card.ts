@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 export type ImageMode = "upload" | "giphy" | "meme";
 export type EffectType = "confetti" | "balloons" | "leaves";
-export type TemplateType = "standard";
+export type TemplateType = "standard" | "meme";
 
 export interface ICardImage {
   mode: ImageMode;
@@ -36,10 +36,12 @@ const CardImageSchema = new Schema<ICardImage>(
 const CardSchema = new Schema<ICard>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    templateType: { type: String, enum: ["standard"], default: "standard" },
-    title: { type: String, required: true },
-    message: { type: String, required: true },
-    recipientName: { type: String, required: true },
+    templateType: { type: String, enum: ["standard", "meme"], default: "standard" },
+    // Required for "standard" cards; enforced per-template in the API route since
+    // a "meme" card is image-only and carries no text.
+    title: { type: String, default: "" },
+    message: { type: String, default: "" },
+    recipientName: { type: String, default: "" },
     image: { type: CardImageSchema },
     effect: { type: String, enum: ["confetti", "balloons", "leaves"] },
   },

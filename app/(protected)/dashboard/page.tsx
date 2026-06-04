@@ -10,6 +10,7 @@ interface Card {
   recipientName: string;
   createdAt: string;
   effect?: string;
+  templateType?: string;
 }
 
 export default function DashboardPage() {
@@ -68,8 +69,8 @@ export default function DashboardPage() {
             {cards.map((card) => (
               <li key={card._id} className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
                 <div>
-                  <p className="font-semibold text-gray-900">{card.title}</p>
-                  <p className="text-sm text-gray-500">For {card.recipientName}</p>
+                  <p className="font-semibold text-gray-900">{card.title || "Meme"}</p>
+                  {card.recipientName && <p className="text-sm text-gray-500">For {card.recipientName}</p>}
                   <p className="text-xs text-gray-400 mt-1">{new Date(card.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="flex gap-3 flex-wrap">
@@ -97,8 +98,8 @@ export default function DashboardPage() {
               <tbody className="divide-y divide-gray-100">
                 {cards.map((card) => (
                   <tr key={card._id} className="hover:bg-gray-50 transition">
-                    <td className="px-5 py-3 font-medium text-gray-900">{card.title}</td>
-                    <td className="px-5 py-3 text-gray-600">{card.recipientName}</td>
+                    <td className="px-5 py-3 font-medium text-gray-900">{card.title || "Meme"}</td>
+                    <td className="px-5 py-3 text-gray-600">{card.recipientName || "—"}</td>
                     <td className="px-5 py-3 text-gray-500">{new Date(card.createdAt).toLocaleDateString()}</td>
                     <td className="px-5 py-3 text-gray-500 capitalize">{card.effect ?? "none"}</td>
                     <td className="px-5 py-3">
